@@ -1,0 +1,7 @@
+# Caddy is the public entry point on the Linux server.
+# With a server IP it serves HTTP on port 80. When a domain is added later,
+# replace :80 with the domain name to enable automatic HTTPS certificates.
+:80 {
+    encode zstd gzip
+    reverse_proxy web:8080
+}

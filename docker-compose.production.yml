@@ -1,0 +1,45 @@
+# Production configuration for a Linux server (for example a DigitalOcean Ubuntu Droplet).
+# Run with: docker compose -f docker-compose.production.yml up -d --build
+services:
+  database:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${VACAY_DB_NAME:-vacay}
+      POSTGRES_USER: ${VACAY_DB_USER:-vacay}
+      POSTGRES_PASSWORD: ${VACAY_DB_PASSWORD:?Set VACAY_DB_PASSWORD in .env}
+    volumes:
+      - vacay_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${VACAY_DB_USER:-vacay} -d ${VACAY_DB_NAME:-vacay}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  web:
+    build: .
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: Host=database;Port=5432;Database=${VACAY_DB_NAME:-vacay};Username=${VACAY_DB_USER:-vacay};Password=${VACAY_DB_PASSWORD:?Set VACAY_DB_PASSWORD in .env}
+      Jwt__Key: ${JWT_KEY:?Set JWT_KEY in .env}
+      Jwt__Issuer: Vacay
+      Jwt__Audience: VacayClient
+      Brevo__ApiKey: ${BREVO_API_KEY:-}
+      Brevo__SenderEmail: ${BREVO_SENDER_EMAIL:-}
+    depends_on:
+      database:
+        condition: service_healthy
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - web
+
+volumes:
+  vacay_postgres_data:
