@@ -8,6 +8,7 @@
 .appdata/
 .dotnet-cli/
 .codex-build/
+.local-ssh/
 *.rsuser
 *.suo
 *.user
