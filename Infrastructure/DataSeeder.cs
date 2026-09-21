@@ -1,0 +1,7 @@
+using HotelManagementSystem.Domain;
+using Microsoft.EntityFrameworkCore;
+namespace HotelManagementSystem.Infrastructure;
+public static class DataSeeder
+{
+ public static async Task SeedAsync(HmsDbContext db){if(await db.Hotels.AnyAsync())return;var hotels=new[]{new Hotel{Name="Sololaki House",Rating=5,Country="Georgia",City="Tbilisi",Address="18 Lado Asatiani Street"},new Hotel{Name="Mtkvari Terrace",Rating=4,Country="Georgia",City="Tbilisi",Address="7 Metekhi Rise"},new Hotel{Name="Boulevard Rooms",Rating=5,Country="Georgia",City="Batumi",Address="2 Rustaveli Avenue"},new Hotel{Name="White Bridge Inn",Rating=4,Country="Georgia",City="Kutaisi",Address="11 Tsereteli Street"},new Hotel{Name="Stepantsminda Lodge",Rating=5,Country="Georgia",City="Kazbegi",Address="4 Gergeti Road"},new Hotel{Name="Alazani Garden",Rating=4,Country="Georgia",City="Telavi",Address="29 Erekle II Street"},new Hotel{Name="Svaneti Tower Stay",Rating=5,Country="Georgia",City="Mestia",Address="6 Tamar Mepe Street"},new Hotel{Name="Black Sea Nest",Rating=4,Country="Georgia",City="Kobuleti",Address="14 Agmashenebeli Avenue"}};db.Hotels.AddRange(hotels);await db.SaveChangesAsync();foreach(var hotel in hotels)db.Rooms.AddRange(new Room{Name="Classic Double",Price=110,HotelId=hotel.Id},new Room{Name="Deluxe King",Price=165,HotelId=hotel.Id},new Room{Name="Family Suite",Price=230,HotelId=hotel.Id});await db.SaveChangesAsync();}
+}

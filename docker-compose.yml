@@ -1,0 +1,35 @@
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: vacay
+      POSTGRES_USER: vacay
+      POSTGRES_PASSWORD: change-this-local-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - vacay_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vacay -d vacay"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Postgres: Host=database;Port=5432;Database=vacay;Username=vacay;Password=change-this-local-password
+      Jwt__Key: replace-this-with-a-long-random-development-key-12345
+      Jwt__Issuer: Vacay
+      Jwt__Audience: VacayClient
+      Brevo__ApiKey: ${BREVO_API_KEY:-}
+      Brevo__SenderEmail: ${BREVO_SENDER_EMAIL:-}
+    depends_on:
+      database:
+        condition: service_healthy
+
+volumes:
+  vacay_postgres_data:

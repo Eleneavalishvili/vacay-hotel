@@ -1,0 +1,14 @@
+namespace HotelManagementSystem.Contracts;
+public record HotelRequest(string Name,int Rating,string Country,string City,string Address);
+public record RoomRequest(string Name,decimal Price,int Capacity=2,int SizeSquareMeters=25,bool BreakfastIncluded=false);
+public record ManagerRequest(string FirstName,string LastName,string PersonalNumber,string Email,string PhoneNumber,string Password);
+public record GuestRegisterRequest(string FirstName,string LastName,string PersonalNumber,string PhoneNumber,string Email,string Password);
+public record GuestUpdateRequest(string FirstName,string LastName,string PersonalNumber,string PhoneNumber);
+public record LoginRequest(string Email,string Password);
+public record ChangePasswordRequest(string CurrentPassword,string NewPassword);
+public record EmailCodeRequest(string Email,string Code);
+public record ReservationRequest(DateOnly CheckInDate,DateOnly CheckOutDate,List<int> RoomIds);
+public record ReservationDatesRequest(DateOnly CheckInDate,DateOnly CheckOutDate);
+public record CarRentalRequest(int CarId,DateOnly PickupDate,DateOnly DropoffDate,string DrivingLicenseId,string PickupLocation);
+public record HostMessageRequest(string Body);
+public record ApiResponse<T>(bool Success,T? Data,string? Message=null);

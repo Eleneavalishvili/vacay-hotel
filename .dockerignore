@@ -1,0 +1,9 @@
+.git
+.vs
+bin
+obj
+.codex-build
+.appdata
+Dockerfile
+docker-compose.yml
+*.user
