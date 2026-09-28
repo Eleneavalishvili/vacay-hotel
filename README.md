@@ -84,6 +84,13 @@ http://YOUR_SERVER_IP/swagger
 
 The production setup runs PostgreSQL, the ASP.NET application, and Caddy as separate containers. Caddy exposes only port 80 publicly and forwards traffic to the application. A domain is optional for the teacher demonstration; adding one later allows HTTPS to be enabled with a small Caddy configuration change.
 
+### Current live deployment
+
+- Website: <http://159.89.14.82>
+- Swagger API: <http://159.89.14.82/swagger/index.html>
+
+These links are served by the `vacay-web` DigitalOcean Droplet while it remains active.
+
 ## Security notes
 
 - `.env`, local data, build output, and local SSH credentials are ignored by Git.
