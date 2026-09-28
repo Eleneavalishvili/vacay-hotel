@@ -27,6 +27,8 @@ services:
       Jwt__Audience: VacayClient
       Brevo__ApiKey: ${BREVO_API_KEY:-}
       Brevo__SenderEmail: ${BREVO_SENDER_EMAIL:-}
+      Admin__Email: ${ADMIN_EMAIL:-}
+      Admin__Password: ${ADMIN_PASSWORD:-}
     depends_on:
       database:
         condition: service_healthy

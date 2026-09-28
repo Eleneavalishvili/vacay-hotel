@@ -28,6 +28,10 @@ SQL database (PostgreSQL in Docker, SQL Server LocalDB for direct local developm
 
 The application uses JWT authentication. The browser stores the signed-in session token locally, so a traveller stays signed in until they log out. The service layer contains the booking rules and email workflow; controllers do not directly contain those rules.
 
+## Admin access
+
+The application has protected `Guest`, `Manager`, and `Admin` roles. A normal sign-up always creates a `Guest`; it cannot create an administrator. When `Admin__Email` and `Admin__Password` are supplied as environment variables, startup creates one confirmed Admin account without storing its password in source control. The Admin account can open the **Admin dashboard**, view booking and rental activity, add or remove hotels and rooms, and create or remove hotel managers. The API and dashboard both enforce the Admin role on every management action.
+
 ## Run locally with Docker (recommended demonstration)
 
 Docker Desktop starts **two Linux containers**:
