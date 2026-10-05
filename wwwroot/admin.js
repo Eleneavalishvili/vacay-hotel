@@ -123,7 +123,10 @@
       delete data.hotelId;
       try {
         await api("/api/hotels/" + hotelId + "/rooms", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-        loadDashboard();
+        event.target.reset();
+        await loadDashboard();
+        var success = document.querySelector('[data-admin-message="room"]');
+        if (success) success.innerHTML = "<div class=\"notice\" role=\"status\">Room created successfully and published live.</div>";
       } catch (error) { showError("room", error); }
     };
 

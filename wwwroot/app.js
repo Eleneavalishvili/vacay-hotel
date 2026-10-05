@@ -152,4 +152,37 @@ async function answerAssistantQuestion(question){
  return guide[city].intro;
 }
 document.addEventListener('submit',async e=>{if(e.target.id!=='chat-form')return;e.preventDefault();e.stopImmediatePropagation();const input=document.querySelector('#chat-input'),chatMessages=document.querySelector('#chat-messages'),question=input.value.trim();if(!question)return;chatMessages.innerHTML+=`<p><b>You:</b> ${question}</p>`;input.value='';chatMessages.innerHTML+='<p><b>Vacay:</b> Checking live availability…</p>';try{const answer=await answerAssistantQuestion(question);const pending=chatMessages.querySelector('p:last-child');if(pending)pending.innerHTML=`<b>Vacay:</b> ${answer}`;else chatMessages.innerHTML+=`<p><b>Vacay:</b> ${answer}</p>`}catch(err){const pending=chatMessages.querySelector('p:last-child');if(pending)pending.innerHTML=`<b>Vacay:</b> ${err.message||'I could not check live availability right now.'}`}chatMessages.scrollTop=chatMessages.scrollHeight},true);
-var adminScript=document.createElement('script');adminScript.src='/admin.js';document.head.appendChild(adminScript);
+var adminScript=document.createElement('script');adminScript.src='/admin.js?v=20261005';document.head.appendChild(adminScript);
+
+// Cancellation is an authenticated profile action: do not ask for another login,
+// payment, or email code. Refresh the selected tab from the database so the
+// cancelled booking disappears immediately and the confirmation stays visible.
+window.addEventListener('click',async e=>{
+ const button=e.target.closest?.('[data-cancel],[data-cancel-car]');
+ if(!button)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ const isCar=button.hasAttribute('data-cancel-car'),id=button.dataset.cancelCar||button.dataset.cancel;
+ button.disabled=true;
+ try{
+  const result=await api(isCar?'/api/car-rentals/'+id:'/api/reservations/'+id,{method:'DELETE'});
+  sessionStorage.setItem('vacayProfilePanel',isCar?'cars':'trips');
+  sessionStorage.setItem('vacayCancellationSuccess',JSON.stringify({kind:isCar?'car':'reservation',emailSent:result?.emailSent!==false}));
+  profile(isCar?'cars':'trips');
+ }catch(err){
+  button.disabled=false;
+  document.querySelector('#profile-panel')?.insertAdjacentHTML('afterbegin',`<div class="error">Cancellation could not be completed: ${err.message}</div>`);
+ }
+},true);
+const profileBeforeCancellationRefresh=profile;
+profile=async function(panelToOpen){
+ const requested=panelToOpen||sessionStorage.getItem('vacayProfilePanel')||'';
+ if(requested)sessionStorage.setItem('vacayProfilePanel',requested);
+ const cancellation=JSON.parse(sessionStorage.getItem('vacayCancellationSuccess')||'null');
+ sessionStorage.removeItem('vacayCancellationSuccess');
+ await profileBeforeCancellationRefresh(requested);
+ if(cancellation){
+  const panel=document.querySelector('#profile-panel');
+  const emailText=cancellation.emailSent?'A cancellation confirmation was sent to your account email.':'The booking was cancelled successfully, but email delivery is temporarily unavailable.';
+  if(panel)panel.insertAdjacentHTML('afterbegin',`<div class="notice cancellation-success" role="status"><strong>Cancellation successful.</strong> Your ${cancellation.kind==='car'?'car rental':'reservation'} has been cancelled. ${emailText}</div>`);
+ }
+};
