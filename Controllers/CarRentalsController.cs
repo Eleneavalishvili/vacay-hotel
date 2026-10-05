@@ -28,6 +28,6 @@ public class CarRentalsController(HmsDbContext db, CarRentalService rentals) : C
  }
  [Authorize(Roles="Guest"),HttpDelete("{id:int}")] public async Task<ActionResult<ApiResponse<object>>> Cancel(int id)
  {
-  var guestId=int.Parse(User.FindFirstValue("guestId")!);var rental=await db.CarRentals.SingleOrDefaultAsync(x=>x.Id==id&&x.GuestId==guestId)??throw new DomainException("Car rental not found.");var fee=await rentals.Cancel(rental);return Ok(new ApiResponse<object>(true,new{fee},"Car rental cancelled and confirmation email sent."));
+  var guestId=int.Parse(User.FindFirstValue("guestId")!);var rental=await db.CarRentals.SingleOrDefaultAsync(x=>x.Id==id&&x.GuestId==guestId)??throw new DomainException("Car rental not found.");var result=await rentals.Cancel(rental);var message=result.EmailSent?"Car rental cancelled and confirmation email sent.":"Car rental cancelled successfully. Email delivery is temporarily unavailable.";return Ok(new ApiResponse<object>(true,new{fee=result.Fee,emailSent=result.EmailSent},message));
  }
 }

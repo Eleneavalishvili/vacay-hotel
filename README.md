@@ -61,7 +61,7 @@ docker compose up --build
 
 ## Direct local development with Visual Studio
 
-When launched using Visual Studio or `dotnet run`, the project uses SQL Server LocalDB through the `SqlServer` connection string in `appsettings.json`. When launched with Docker, it uses the PostgreSQL connection string injected by Docker Compose. Therefore the site is connected to an SQL database in both modes, but they are intentionally separate development databases.
+When launched using Visual Studio or `dotnet run` in Development, the project uses the PostgreSQL database exposed by Docker (`localhost:5432`) through the `Postgres` connection string in `appsettings.Development.json`. When launched inside Docker, it uses the same PostgreSQL database through the Compose service name (`database`). Keep the database container running when starting the app from Visual Studio so both modes use the same data.
 
 Use `dotnet user-secrets` for Brevo values during direct development; do not put a real API key or password in source control.
 
