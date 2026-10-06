@@ -3,7 +3,7 @@
 /* Responsive layout for resized desktop windows and phones. */
 @media (max-width: 900px) {
   header { flex-wrap: wrap; padding: 15px 5%; }
-  header nav { order: 3; width: 100%; justify-content: flex-start; overflow-x: auto; gap: 18px; padding-bottom: 2px; }
+  header nav { display: flex; order: 3; width: 100%; justify-content: flex-start; overflow-x: auto; gap: 18px; padding-bottom: 2px; }
   header nav a { white-space: nowrap; }
   .account { margin-left: auto; }
   .admin-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }

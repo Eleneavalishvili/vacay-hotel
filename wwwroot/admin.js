@@ -151,7 +151,7 @@
     document.querySelectorAll("[data-admin-delete-room]").forEach(function (button) {
       button.onclick = async function () {
         if (!confirm("Delete this room?")) return;
-        try { await api("/api/hotels/" + button.dataset.hotelId + "/rooms/" + button.dataset.adminDeleteRoom, { method: "DELETE" }); loadDashboard(); } catch (error) { alert(error.message); }
+        try { await api("/api/hotels/" + button.dataset.hotelId + "/rooms/" + button.dataset.adminDeleteRoom, { method: "DELETE" }); await loadDashboard(); } catch (error) { alert(error.message); }
       };
     });
     document.querySelectorAll("[data-admin-delete-manager]").forEach(function (button) {

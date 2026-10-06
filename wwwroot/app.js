@@ -152,7 +152,7 @@ async function answerAssistantQuestion(question){
  return guide[city].intro;
 }
 document.addEventListener('submit',async e=>{if(e.target.id!=='chat-form')return;e.preventDefault();e.stopImmediatePropagation();const input=document.querySelector('#chat-input'),chatMessages=document.querySelector('#chat-messages'),question=input.value.trim();if(!question)return;chatMessages.innerHTML+=`<p><b>You:</b> ${question}</p>`;input.value='';chatMessages.innerHTML+='<p><b>Vacay:</b> Checking live availability…</p>';try{const answer=await answerAssistantQuestion(question);const pending=chatMessages.querySelector('p:last-child');if(pending)pending.innerHTML=`<b>Vacay:</b> ${answer}`;else chatMessages.innerHTML+=`<p><b>Vacay:</b> ${answer}</p>`}catch(err){const pending=chatMessages.querySelector('p:last-child');if(pending)pending.innerHTML=`<b>Vacay:</b> ${err.message||'I could not check live availability right now.'}`}chatMessages.scrollTop=chatMessages.scrollHeight},true);
-var adminScript=document.createElement('script');adminScript.src='/admin.js?v=20261005';document.head.appendChild(adminScript);
+var adminScript=document.createElement('script');adminScript.src='/admin.js?v=20261006';document.head.appendChild(adminScript);
 
 // Cancellation is an authenticated profile action: do not ask for another login,
 // payment, or email code. Refresh the selected tab from the database so the
