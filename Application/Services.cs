@@ -75,6 +75,37 @@ public class CarRentalService(HmsDbContext db,IEmailSender email)
   return new CancellationResult(fee,emailSent);
  }
 }
+public class ExperienceBookingService(HmsDbContext db,IEmailSender email)
+{
+ public async Task<ExperienceBooking> Create(int guestId,ExperienceBookingRequest r)
+ {
+  if(string.IsNullOrWhiteSpace(r.City)||string.IsNullOrWhiteSpace(r.Title)||string.IsNullOrWhiteSpace(r.Address))throw new DomainException("The experience location is incomplete.");
+  if(r.Date<DateOnly.FromDateTime(DateTime.UtcNow))throw new DomainException("Choose today or a future date.");
+  if(r.Participants<1||r.Participants>20)throw new DomainException("Choose between 1 and 20 participants.");
+  if(r.Price<0)throw new DomainException("The experience price is invalid.");
+  var booking=new ExperienceBooking{GuestId=guestId,City=r.City.Trim(),Title=r.Title.Trim(),Category=r.Category?.Trim()??string.Empty,Address=r.Address.Trim(),Date=r.Date,ArrivalTime=r.ArrivalTime,Price=r.Price,Participants=r.Participants};
+  db.ExperienceBookings.Add(booking);await db.SaveChangesAsync();
+  try
+  {
+   var user=await db.Users.SingleAsync(x=>x.GuestId==guestId);
+   var total=booking.Price*booking.Participants;
+   await email.SendAsync(user.Email,"Vacay experience confirmed",$"Your Vacay experience is confirmed!\n\nExperience: {booking.Title}\nCategory: {booking.Category}\nCity: {booking.City}, Georgia\nAddress: {booking.Address}\nDate: {booking.Date:dd MMM yyyy}\nArrival time: {booking.ArrivalTime:hh\\:mm}\nParticipants: {booking.Participants}\nTotal: {(total==0?"Free":$"${total:0.00}")}\n\nPlease arrive at the address at least 10 minutes before the arrival time.");
+  }
+  catch(Exception){/* The booking is saved even if email delivery is unavailable. */}
+  return booking;
+ }
+ public async Task<CancellationResult> Cancel(ExperienceBooking booking)
+ {
+  var emailSent=false;
+  try
+  {
+   var user=await db.Users.SingleAsync(x=>x.GuestId==booking.GuestId);
+   await email.SendAsync(user.Email,"Vacay experience booking cancelled",$"Your experience booking has been cancelled.\n\nExperience: {booking.Title}\nCity: {booking.City}, Georgia\nAddress: {booking.Address}\nDate: {booking.Date:dd MMM yyyy}\nArrival time: {booking.ArrivalTime:hh\\:mm}");emailSent=true;
+  }
+  catch(Exception){/* Cancellation must complete even if email delivery is unavailable. */}
+  db.ExperienceBookings.Remove(booking);await db.SaveChangesAsync();return new CancellationResult(0,emailSent);
+ }
+}
 public class HostChatService(HmsDbContext db)
 {
  public async Task<List<HostMessage>> Send(int reservationId,int guestId,string body){if(string.IsNullOrWhiteSpace(body))throw new DomainException("Write a message before sending.");var reservation=await db.Reservations.Include(x=>x.ReservationRooms).ThenInclude(x=>x.Room).ThenInclude(x=>x.Hotel).SingleOrDefaultAsync(x=>x.Id==reservationId&&x.GuestId==guestId)??throw new DomainException("Reservation not found.");db.HostMessages.Add(new HostMessage{ReservationId=reservationId,GuestId=guestId,Sender="Guest",Body=body.Trim(),SentAtUtc=DateTime.UtcNow});var room=reservation.ReservationRooms.FirstOrDefault()?.Room;var reply=Reply(body,room?.Hotel.City??"Georgia",room?.Hotel.Address??"the property",room?.Name??"your room");db.HostMessages.Add(new HostMessage{ReservationId=reservationId,GuestId=guestId,Sender="Host Nino",Body=reply,SentAtUtc=DateTime.UtcNow.AddSeconds(1)});await db.SaveChangesAsync();return await Messages(reservationId,guestId);}

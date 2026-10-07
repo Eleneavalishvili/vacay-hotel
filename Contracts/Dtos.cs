@@ -10,5 +10,6 @@ public record EmailCodeRequest(string Email,string Code);
 public record ReservationRequest(DateOnly CheckInDate,DateOnly CheckOutDate,List<int> RoomIds);
 public record ReservationDatesRequest(DateOnly CheckInDate,DateOnly CheckOutDate);
 public record CarRentalRequest(int CarId,DateOnly PickupDate,DateOnly DropoffDate,string DrivingLicenseId,string PickupLocation);
+public record ExperienceBookingRequest(string City,string Title,string Category,string Address,DateOnly Date,TimeOnly ArrivalTime,decimal Price,int Participants=1);
 public record HostMessageRequest(string Body);
 public record ApiResponse<T>(bool Success,T? Data,string? Message=null);
