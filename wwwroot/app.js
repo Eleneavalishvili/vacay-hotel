@@ -61,14 +61,14 @@ async function profile(){if(!localStorage.getItem('vacayToken')){location.hash='
 // Keep each photo tied to the actual catalog model, instead of assigning
 // unrelated stock images by list position.
 const carImages={
-  'Toyota Yaris':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/2024_Toyota_Yaris_Hybrid_Z.jpg',
-  'Hyundai Elantra':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/330px-2023_Hyundai_Elantra_Limited_in_Silver_2C_front_left_2C_04-04-2026.jpg',
-  'Kia Sportage':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/2025_Kia_Sportage_S_front_only.jpg',
-  'Toyota RAV4':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/2026-toyota-rav4-limited-352-68f0e7f67ae2b.jpg',
+  'Toyota Yaris':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/2024_20Toyota_20Yaris_20Hybrid_20Z_20rear',
+  'Hyundai Elantra':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/Hyundai_20Elantra_202023_20_28CN7_29_20China',
+  'Kia Sportage':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/Kia_20Sportage_201.6_20T-GDI_20_282024_29_20_2854733793881_29',
+  'Toyota RAV4':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/Toyota_20RAV4_20_28XA50_29_20Washington_20DC_20Metro_20Area_2C_20USA_20_281_29',
   'Mercedes Vito':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/Mercedes-Benz-Vito-Tourer.jpg',
   'Suzuki Jimny':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/LITTLE5.jpg',
   'Volkswagen Golf':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/DB2016AU00877_web_1600.jpg',
-  'BMW X3':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/2025-bmw-x3-xdrive30-228-687fec9f6b2e8.jpg',
+  'BMW X3':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/2023_20BMW_20X3_20xDrive30i_20M-Sport_20rear',
   'Renault Duster':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/transautomobile-renault-duster-3053-760829.jpg',
   'Ford Transit':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/27_FRD_TRN_PVAN_XLT_55346_v2.webp',
   'Toyota Camry':'https://res.cloudinary.com/kbc2ndrb/image/upload/f_auto,q_auto,w_900/2023_Toyota_Camry_exterior_side_white.png'
