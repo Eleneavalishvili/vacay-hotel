@@ -52,9 +52,9 @@
 
       var hotelCards = hotelRooms.map(function (hotel) {
         var rooms = hotel.rooms.map(function (room) {
-          return "<div class=\"admin-room\"><span><strong>" + escapeHtml(room.name) + "</strong> · $" + room.price + "/night · " + room.capacity + " guests · " + (room.breakfastIncluded ? "breakfast included" : "room only") + "</span><button data-admin-delete-room=\"" + room.id + "\" data-hotel-id=\"" + hotel.id + "\">Delete room</button></div>";
+          return "<div class=\"admin-room\"><span><strong>" + escapeHtml(room.name) + "</strong> · $" + room.price + "/night · " + room.capacity + " guests · " + (room.breakfastIncluded ? "breakfast included" : "room only") + "</span><button type=\"button\" data-admin-delete-room=\"" + room.id + "\" data-hotel-id=\"" + hotel.id + "\">Delete room</button></div>";
         }).join("");
-        return "<article class=\"admin-hotel\"><div class=\"admin-hotel-heading\"><div><h3>" + escapeHtml(hotel.name) + "</h3><p>" + escapeHtml(hotel.city) + " · " + escapeHtml(hotel.address) + " · " + "★".repeat(hotel.rating) + "</p></div><button data-admin-delete-hotel=\"" + hotel.id + "\">Delete hotel</button></div><div class=\"admin-room-list\">" + (rooms || "<p>No rooms yet.</p>") + "</div></article>";
+        return "<article class=\"admin-hotel\"><div class=\"admin-hotel-heading\"><div><h3>" + escapeHtml(hotel.name) + "</h3><p>" + escapeHtml(hotel.city) + " · " + escapeHtml(hotel.address) + " · " + "★".repeat(hotel.rating) + "</p></div><button type=\"button\" data-admin-delete-hotel=\"" + hotel.id + "\">Delete hotel</button></div><div class=\"admin-room-list\">" + (rooms || "<p>No rooms yet.</p>") + "</div></article>";
       }).join("");
 
       var managers = summary.managers.map(function (manager) {
@@ -105,6 +105,14 @@
     if (slot) slot.innerHTML = "<div class=\"error\">" + escapeHtml(error.message) + "</div>";
   }
 
+  function showDeleteMessage(message, isError) {
+    var root = document.querySelector("#admin-content");
+    if (!root) return;
+    var existing = root.querySelector("[data-admin-delete-message]");
+    if (existing) existing.remove();
+    root.insertAdjacentHTML("afterbegin", "<div data-admin-delete-message class=\"" + (isError ? "error" : "notice") + " role=\"status\">" + escapeHtml(message) + "</div>");
+  }
+
   function bindForms() {
     var hotel = document.querySelector("#admin-hotel-form");
     hotel.onsubmit = async function (event) {
@@ -144,14 +152,16 @@
 
     document.querySelectorAll("[data-admin-delete-hotel]").forEach(function (button) {
       button.onclick = async function () {
-        if (!confirm("Delete this hotel? Hotels with rooms or active reservations cannot be deleted.")) return;
-        try { await api("/api/hotels/" + button.dataset.adminDeleteHotel, { method: "DELETE" }); loadDashboard(); } catch (error) { alert(error.message); }
+        if (!confirm("Delete this hotel and all of its rooms? Active or future reservations must be cancelled first.")) return;
+        button.disabled = true;
+        try { await api("/api/hotels/" + button.dataset.adminDeleteHotel, { method: "DELETE" }); await loadDashboard(); showDeleteMessage("Hotel and its rooms were deleted successfully.", false); } catch (error) { showDeleteMessage(error.message, true); } finally { button.disabled = false; }
       };
     });
     document.querySelectorAll("[data-admin-delete-room]").forEach(function (button) {
       button.onclick = async function () {
         if (!confirm("Delete this room?")) return;
-        try { await api("/api/hotels/" + button.dataset.hotelId + "/rooms/" + button.dataset.adminDeleteRoom, { method: "DELETE" }); await loadDashboard(); } catch (error) { alert(error.message); }
+        button.disabled = true;
+        try { await api("/api/hotels/" + button.dataset.hotelId + "/rooms/" + button.dataset.adminDeleteRoom, { method: "DELETE" }); await loadDashboard(); showDeleteMessage("Room deleted successfully.", false); } catch (error) { showDeleteMessage(error.message, true); } finally { button.disabled = false; }
       };
     });
     document.querySelectorAll("[data-admin-delete-manager]").forEach(function (button) {
