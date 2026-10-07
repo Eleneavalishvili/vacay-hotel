@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Vacay Admin Dashboard</title>
+</head>
+<body>
+  <p>Opening the protected Vacay admin dashboard…</p>
+  <script>
+    if (!localStorage.getItem('vacayToken')) sessionStorage.setItem('vacayAdminReturn', '1');
+    location.replace('/#admin');
+  </script>
+</body>
+</html>
